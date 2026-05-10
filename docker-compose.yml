@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Main API Server
+  api:
+    build: .
+    container_name: prashant-social-ai-bot
+    ports:
+      - "5000:5000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - YOUTUBE_CHANNEL_ID=${YOUTUBE_CHANNEL_ID}
+      - FLASK_ENV=production
+      - DEBUG=False
+    volumes:
+      - ./videos:/app/videos
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # Optional: PostgreSQL for future database needs
+  db:
+    image: postgres:15-alpine
+    container_name: prashant-ai-db
+    environment:
+      - POSTGRES_USER=prashant
+      - POSTGRES_PASSWORD=secure_password_here
+      - POSTGRES_DB=prashant_ai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - ai-network
+    # Uncomment when using database features
+
+volumes:
+  postgres_data:
+
+networks:
+  ai-network:
+    driver: bridge
