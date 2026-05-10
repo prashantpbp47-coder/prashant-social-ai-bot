@@ -1,0 +1,87 @@
+.PHONY: help setup install run test clean docker-build docker-run docker-stop
+
+help:
+	@echo "╔════════════���═══════════════════════════════════════════════╗"
+	@echo "║     PRASHANT SOCIAL AI BOT - AVAILABLE COMMANDS            ║"
+	@echo "╚════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "Setup & Installation:"
+	@echo "  make setup          - Complete setup (venv + dependencies)"
+	@echo "  make install        - Install dependencies only"
+	@echo ""
+	@echo "Running:"
+	@echo "  make run            - Start development server"
+	@echo "  make demo           - Run quick demo"
+	@echo ""
+	@echo "Testing & Quality:"
+	@echo "  make test           - Run tests"
+	@echo "  make lint           - Run code linting"
+	@echo ""
+	@echo "Docker:"
+	@echo "  make docker-build   - Build Docker image"
+	@echo "  make docker-run     - Run with Docker"
+	@echo "  make docker-stop    - Stop Docker containers"
+	@echo ""
+	@echo "Maintenance:"
+	@echo "  make clean          - Clean generated files"
+	@echo "  make logs           - Show application logs"
+	@echo ""
+
+setup:
+	@echo "📦 Running complete setup..."
+	chmod +x setup.sh
+	./setup.sh
+	@echo "✅ Setup complete!"
+
+install:
+	@echo "📥 Installing dependencies..."
+	pip install -r requirements.txt
+	@echo "✅ Dependencies installed!"
+
+run:
+	@echo "🚀 Starting development server..."
+	@echo "Visit: http://localhost:5000"
+	python api/app.py
+
+demo:
+	@echo "🎬 Running quick demo..."
+	python quick_start.py
+
+test:
+	@echo "🧪 Running tests..."
+	pytest tests/ -v --cov=core --cov=api
+
+lint:
+	@echo "🔍 Running linter..."
+	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+clean:
+	@echo "🧹 Cleaning up..."
+	find . -type d -name __pycache__ -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+	rm -rf .pytest_cache
+	rm -rf .coverage
+	rm -rf htmlcov
+	@echo "✅ Cleaned!"
+
+docker-build:
+	@echo "🐳 Building Docker image..."
+	docker-compose build
+	@echo "✅ Docker image built!"
+
+docker-run:
+	@echo "🚀 Starting Docker containers..."
+	docker-compose up -d
+	@echo "✅ Containers started!"
+	@echo "Visit: http://localhost:5000"
+
+docker-stop:
+	@echo "🛑 Stopping Docker containers..."
+	docker-compose down
+	@echo "✅ Containers stopped!"
+
+logs:
+	@echo "📋 Showing application logs..."
+	tail -f logs/app.log
+
+.DEFAULT_GOAL := help
